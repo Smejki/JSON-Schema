@@ -13,8 +13,15 @@ class CarFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->getCarsData() as $information) {
-            $product = $this->buildCar($information['model'], $information['brand'], $information['start'], $information['end']);
+        for ($counter = 1; $counter <= 100; ++$counter) {
+            $product = $this->buildCar(
+                'Patentwagen',
+                'Benz',
+                new \DateTime('1844-01-01'),
+                new \DateTime('1854-01-01'),
+                $counter
+            );
+
             $manager->persist($product);
         }
 
@@ -22,36 +29,25 @@ class CarFixtures extends Fixture
     }
 
     /**
-     * @param string $model
-     * @param string $brand
-     * @param \DateTime $startDate
+     * @param string         $model
+     * @param string         $brand
+     * @param \DateTime      $startDate
      * @param \DateTime|null $endDate
+     * @param int            $counter
+     *
      * @return Car
      */
-    private function buildCar(string $model, string $brand, \DateTime $startDate, ?\DateTime $endDate): Car
+    private function buildCar(string $model, string $brand, \DateTime $startDate, ?\DateTime $endDate, int $counter): Car
     {
-        $product = new Car();
+        $modifyingTime = sprintf('+%s year', $counter);
 
-        $product->setModel($model)
-            ->setBrand($brand)
+        $startDate->modify($modifyingTime);
+        $endDate instanceof \DateTime ? $endDate->modify($modifyingTime) : null;
+
+        return (new Car())
+            ->setModel($model.'_'.$counter)
+            ->setBrand($brand.'_'.$counter)
             ->setStartProductionDate($startDate)
             ->setEndProductionDate($endDate);
-
-        return $product;
-    }
-
-    /**
-     * @return array
-     */
-    private function getCarsData(): array
-    {
-        return [
-            [
-                'model' => '407',
-                'brand' => 'Peugeot',
-                'start' => new \DateTime('2005-01-01'),
-                'end' => null,
-            ]
-        ];
     }
 }

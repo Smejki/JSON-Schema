@@ -6,12 +6,6 @@ use App\Entity\Car;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-/**
- * @method Car|null find($id, $lockMode = null, $lockVersion = null)
- * @method Car|null findOneBy(array $criteria, array $orderBy = null)
- * @method Car[]    findAll()
- * @method Car[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class CarRepository extends ServiceEntityRepository
 {
     /**
@@ -23,12 +17,15 @@ class CarRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $field
+     * @param $value
+     *
      * @return Car[] Returns an array of Car objects
      */
-    public function findByExampleField($value)
+    public function findByField(string $field, $value)
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
+            ->andWhere(sprintf('c.%s = :val', $field))
             ->setParameter('val', $value)
             ->orderBy('c.id', 'ASC')
             ->setMaxResults(10)
@@ -38,13 +35,15 @@ class CarRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $field
      * @param $value
+     *
      * @return Car|null
      */
-    public function findOneBySomeField($value): ?Car
+    public function findOneByField(string $field, $value): ?Car
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
+            ->andWhere(sprintf('c.%s = :val', $field))
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
